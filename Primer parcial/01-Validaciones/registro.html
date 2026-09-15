@@ -5,6 +5,22 @@
   <title>Registrar Asistencia - CECyT 9</title>
 </head>
 <body>
-
+<main>
+  <form class="formulario registro">
+  <h1>Registrar asistencia</h1>
+  <label for="nombre">Nombre</label>
+  <input type="text" id="nombre" name="nombre" required>
+  <span class="error" id="error-nombre"></span>
+  <label for="boleta">Numero de boleta</label>
+  <input type="text" id="boleta" name="boleta" required>
+  <span class="error" id="error-boleta"></span>
+  <label for="fecha">Fecha de registro (DD/MM/AA)</label>
+  <input type="text" id="fecha" name="fecha" placeholder= "DD/MM/AAAA" required>
+  <span class="error" id="error-fecha"></span>
+  <button type="submit">Registrar</button>
+  <p class="mensaje-exito" id="mensaje-exito"></p>
+</form>
+</main>
+<script src="/Primer parcial/01-Validaciones/js/validaciones.js"></script>
 </body>
 </html>
