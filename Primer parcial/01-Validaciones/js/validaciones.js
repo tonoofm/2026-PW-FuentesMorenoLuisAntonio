@@ -7,43 +7,51 @@ Las expresiones regulares, son patrones que nos ayudan a validar cadenas bajo ci
 */
 
 const patrones = {
-    nombre : /^[A-Za-zÁÉÍÓÚÑáéíóúñÜü\s]{2.60}$/,
-    boleta : /^d{10}$/,
-    fecha : /^(0[1-9]|[12]\d|3[01])\/(0[1-9]|1[0-2])\/\d{4}$/
+    nombre: /^[A-Za-zÁÉÍÓÚÑáéíóúñÜü\s]{2,60}$/,
+    boleta: /^\d{10}$/,
+    fecha: /^(0[1-9]|[12]\d|3[01])\/(0[1-9]|1[0-2])\/\d{4}$/
 };
 
 const mensajes = {
-    nombre : "Solo letras y espacios, entre 2 y 60 caracteres.",
+    nombre: "Solo letras y espacios, entre 2 y 60 caracteres.",
     boleta: "Debe tener exactamente 10 dígitos numéricos.",
     fecha: "La fecha debe tener el formato DD/MM/AAAA."
 };
 
-function validarCampo(campo, valor){
-    return patrones[campo].test(valor.trim())
+function validarCampo(campo, valor) {
+    return patrones[campo].test(valor.trim());
 }
-
-//para validar el formulario debemos ocupar los principios de obtención y manipulación de los elementos del DOM
 
 if (typeof document !== 'undefined') {
-    const formulario =  document.getElementById('form-registro');
-    formulario.addEventListener('submit', (evento) =>{
-evento.preventDefault();
-let formularioValido= true;
+    const formulario = document.getElementById('form-registro');
+    
+    if (formulario) {
+        formulario.addEventListener('submit', (evento) => {
+            evento.preventDefault();
+            let formularioValido = true;
 
-for(const campo of Object.keys(patrones)){{
-    const input = document.getElementById(campo);
-    const errorSpan = document.getElementById(`error-${campo}`);
-}
-const esValido = validarCampo(campo,input.value);
-input.classList.toggle('invalido, !esValido');
-spanError.textContent = esValido ? '' : mensajes[campo];
-if (!esValido) formularioValido = false;
-}
+            for (const campo of Object.keys(patrones)) {
+                const input = document.getElementById(campo);
+                const errorSpan = document.getElementById(`error-${campo}`);
+                
+                if (input && errorSpan) {
+                    const esValido = validarCampo(campo, input.value);
+                    input.classList.toggle('invalido', !esValido);
+                    errorSpan.textContent = esValido ? '' : mensajes[campo];
+                    if (!esValido) formularioValido = false;
+                }
+            }
 
-const mensajeExito = document.getElementById('mensaje-exito');
-mensajeExito.textContent = formularioValido ? 'Registro exitoso!' : '';
-
-
-
-    })
+            const mensajeExito = document.getElementById('mensaje-exito');
+            if (mensajeExito) {
+                if (formularioValido) {
+                    mensajeExito.textContent = '¡Registro exitoso!';
+                    mensajeExito.classList.add('visible');
+                } else {
+                    mensajeExito.textContent = '';
+                    mensajeExito.classList.remove('visible');
+                }
+            }
+        });
+    }
 }
