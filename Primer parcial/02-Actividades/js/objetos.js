@@ -20,12 +20,15 @@ for (const [campo, valor] of Object.entries(taller)) {
 }
 
 // TODO: JSON.stringify — convierte `taller` a texto (guárdalo en `textoJson`) e imprímelo
-const textoJson = JSON.stringify(taller);
-console.log("\nObjeto convertido a cadena JSON:");
+const textoJson = JSON.stringify(taller, null, 2);
+console.log("Objeto convertido a cadena JSON:");
 console.log(textoJson);
+console.log('tipo: ', typeof textoJson);
 
 // TODO: JSON.parse — convierte `textoJson` de vuelta a objeto (guárdalo en `objetoDeVuelta`)
 //       e imprime `objetoDeVuelta.nombre`
+console.log("Nombre extraído de objetoDeVuelta:");
 const objetoDeVuelta = JSON.parse(textoJson);
-console.log("\nNombre extraído de objetoDeVuelta:");
+console.log('tipo: ', typeof objetoDeVuelta);
 console.log(objetoDeVuelta.nombre);
+
