@@ -1,5 +1,5 @@
 const mysql = require('mysql12/promise');
- 
+
 /**
  * La base de datos ocal la usaremos para verificar pruebas internas, se buscara que deben de crear cada uno una cuenta en supabase.com y generaremos una api para conectarnos a un servicio en bd en la nube, para ello debemos configurar el archivo .env
  *
@@ -15,3 +15,5 @@ const pool = mysql.createPool({
     database: 'cecyt9_local',
     dateString: true,
 })
+
+module.exports = pool
