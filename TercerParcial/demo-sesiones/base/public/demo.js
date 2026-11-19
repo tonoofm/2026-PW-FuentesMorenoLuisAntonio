@@ -1,5 +1,9 @@
+// Atajo para no escribir document.getElementById en cada línea; se usa muchísimo.
 const $ = (id) => document.getElementById(id);
 
+// Todo pasa por aquí y nunca lanza excepción: la bitácora tiene que poder mostrar
+// también los fallos (401, 403, servidor caído), no solo las respuestas buenas.
+// Por eso un error de red se devuelve como status 0 en vez de romper el flujo.
 async function llamar(metodo, url, cuerpo) {
   const opciones = { method: metodo, headers: {} };
   if (cuerpo !== undefined) {
@@ -23,6 +27,8 @@ async function llamar(metodo, url, cuerpo) {
   return { status: respuesta.status, datos };
 }
 
+// 401 y 403 llevan color propio porque justo esa diferencia (no estás identificado
+// vs. estás identificado pero no tienes permiso) es lo que se quiere ver de un vistazo.
 function claseDelCodigo(status) {
   if (status >= 200 && status < 300) return 'codigo ok';
   if (status === 401) return 'codigo e401';
@@ -30,6 +36,9 @@ function claseDelCodigo(status) {
   return 'codigo error';
 }
 
+// Se arma con textContent y no con innerHTML porque el JSON viene del servidor
+// y no conviene inyectarlo como HTML. El prepend deja lo más reciente arriba
+// para no tener que hacer scroll tras cada petición.
 function anotar(metodo, url, status, datos) {
   const li = document.createElement('li');
 
@@ -47,6 +56,9 @@ function anotar(metodo, url, status, datos) {
   $('bitacora').prepend(li);
 }
 
+// El estado de la sesión se le pregunta al servidor, que es quien la guarda;
+// el navegador solo tiene una cookie con un identificador. Se muestra también
+// document.cookie para poder comparar lo que ve JS con lo que sabe el servidor.
 async function mostrarEstado() {
   const { status, datos } = await llamar('GET', '/api/sesion');
   const estado = $('estado');
@@ -63,12 +75,16 @@ async function mostrarEstado() {
   $('cookie-js').textContent = document.cookie || '(vacío)';
 }
 
+// Existe solo para que armar las filas de la tabla no repita tres líneas por columna.
 function celda(texto) {
   const td = document.createElement('td');
   td.textContent = texto;
   return td;
 }
 
+// Aquí está el punto didáctico de la pantalla: dejar claro si las sesiones viven
+// en memoria (se pierden al reiniciar) o en MySQL (sobreviven). Los mensajes de
+// error y de tabla vacía ocupan las 4 columnas para que no se vean como una fila rota.
 async function mostrarSesiones() {
   const { status, datos } = await llamar('GET', '/api/diagnostico/sesiones');
   const tabla = $('tabla-sesiones');
@@ -112,6 +128,9 @@ async function mostrarSesiones() {
   }
 }
 
+// Después de cualquier acción pueden haber cambiado tanto el estado como la tabla
+// (un login crea sesión, un logout la borra), así que se actualizan los dos.
+// Van en paralelo porque no dependen entre sí.
 async function refrescarTodo() {
   await Promise.all([mostrarEstado(), mostrarSesiones()]);
 }
@@ -140,6 +159,8 @@ document.querySelectorAll('button[data-url]').forEach((boton) => {
 $('btn-refrescar').addEventListener('click', refrescarTodo);
 $('btn-sesiones').addEventListener('click', mostrarSesiones);
 
+// Se pide la config una sola vez al abrir la página, porque no cambia durante
+// la sesión; lo demás sí cambia y por eso va aparte en refrescarTodo.
 async function iniciar() {
   const { status, datos } = await llamar('GET', '/api/config');
   $('config').textContent = status === 200 ? JSON.stringify(datos, null, 2) : `Error ${status}`;
