@@ -14,5 +14,16 @@ function crearModeloTokens(pool) {
             [String(jti || '')]);
     }
     return filas.length > 0;
+
+    //Una función para poder consultar todos l os tokens revocados
+    async function listar() {
+        const [filas] = await pool.query(
+            'SELECT jti, usuario, espira, revocado_en FROM tokens_revocados ORDER BY revocado_en DESC, jti');
+        return filas;
+    };
+
+    return (revocar, estaRevocado, listar);
 }
+
+module.exports = { crearModeloTokens };
     
